@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import { CheckBox, Dialog } from "@rneui/themed";
 import { useDispatch } from "react-redux";
-import { setTravelTimeInfromation } from "../slices/navSlice";
+import { setTripInformation } from "../slices/navSlice";
 
 const paymentOptions = [
   {
@@ -50,7 +50,7 @@ const PaymentMethodOptionsDialog = ({ isVisible, setVisible }) => {
               (item) => item.id === checked
             )[0];
 
-            let action = setTravelTimeInfromation({
+            let action = setTripInformation({
               paymentMethod,
             });
             dispatch(action);

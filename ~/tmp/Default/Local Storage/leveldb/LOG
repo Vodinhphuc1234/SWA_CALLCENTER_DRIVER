@@ -1,0 +1,5 @@
+2022/07/22-15:33:34.535 3 Creating DB /home/vodinhphuc/React learning/FinalProject/CallCenterDriver/~/tmp/Default/Local Storage/leveldb since it was missing.
+2022/07/22-15:33:35.183 3 Reusing MANIFEST /home/vodinhphuc/React learning/FinalProject/CallCenterDriver/~/tmp/Default/Local Storage/leveldb/MANIFEST-000001
+2022/07/22-16:09:19.874 11 Level-0 table #5: started
+2022/07/22-16:09:20.029 11 Level-0 table #5: 13604 bytes OK
+2022/07/22-16:09:20.108 11 Delete type=0 #3

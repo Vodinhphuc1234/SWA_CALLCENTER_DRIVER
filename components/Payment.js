@@ -4,7 +4,7 @@ import { Button, Card, Divider, Icon } from "@rneui/themed";
 import tw from "tailwind-react-native-classnames";
 import PagerView from "react-native-pager-view";
 import TaxiOptionCard from "./TaxiOptionCard";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -13,7 +13,7 @@ import {
   faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import { selectTravelTimeInfromation } from "../slices/navSlice";
+import { selectTripInformation } from "../slices/navSlice";
 import PaymentMethodOptionsDialog from "./PaymentMethodOptionsDialog";
 
 const taxiOptions = [
@@ -44,7 +44,7 @@ const Payment = () => {
   const [showPaymentOptionsDialog, setShowPaymentOptionsDialog] =
     useState(false);
   const navigator = useNavigation();
-  const tripInfo = useSelector(selectTravelTimeInfromation);
+  const tripInfo = useSelector(selectTripInformation);
   return (
     <>
       <View style={tw`bg-white h-full`}>

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "CallCenterCustomer",
-    "slug": "CallCenterCustomer",
+    "name": "CallCenterDriver",
+    "slug": "CallCenterDriver",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,9 +25,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "googleServicesFile": "./google-services.json",
       "permissions": [
         "ACCESS_FINE_LOCATION"
-    ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAWrW4DvDYXsJsUHgorj_xj8UF3M7f1OIs"
+        }
+      },
+      "package": "com.dinhphuc2009.CallCenterDriver"
     },
     "web": {
       "favicon": "./assets/favicon.png"

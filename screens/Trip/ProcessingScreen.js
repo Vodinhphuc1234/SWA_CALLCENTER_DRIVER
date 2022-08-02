@@ -3,7 +3,7 @@ import React from "react";
 import { Button, Card, Divider, Icon } from "@rneui/themed";
 import tw from "tailwind-react-native-classnames";
 import { useSelector } from "react-redux";
-import { selectTravelTimeInfromation } from "../../slices/navSlice";
+import { selectTripInformation } from "../../slices/navSlice";
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
@@ -11,7 +11,7 @@ import SafeAreaViewAdroid from "../../components/SafeAreaView";
 
 const ProcessingScreen = () => {
   const navigator = useNavigation();
-  const tripInfo = useSelector(selectTravelTimeInfromation);
+  const tripInfo = useSelector(selectTripInformation);
   return (
     <SafeAreaViewAdroid>
       <View style={tw`h-full bg-white`}>

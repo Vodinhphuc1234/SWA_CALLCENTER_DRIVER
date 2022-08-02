@@ -18,7 +18,7 @@ export const navSlice = createSlice({
     setDestination(state, action) {
       state.destination = action.payload;
     },
-    setTravelTimeInfromation(state, action) {
+    setTripInformation(state, action) {
       state.travelTimeInfromation = action.payload;
     },
     setUser(state, action) {
@@ -33,14 +33,14 @@ export const navSlice = createSlice({
 export const {
   setOrigin,
   setDestination,
-  setTravelTimeInfromation,
+  setTripInformation,
   setUser,
   setDriverState,
 } = navSlice.actions;
 
 export const selectOrigin = (state) => state.nav.origin;
 export const selectDestination = (state) => state.nav.destination;
-export const selectTravelTimeInfromation = (state) =>
+export const selectTripInformation = (state) =>
   state.nav.travelTimeInfromation;
 export const selectUser = (state) => state.nav.user;
 export const selectDriverState = (state) => state.nav.driverState;

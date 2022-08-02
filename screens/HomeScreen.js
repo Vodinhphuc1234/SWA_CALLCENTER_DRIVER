@@ -22,12 +22,11 @@ import {
   faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StackActions, useNavigation } from "@react-navigation/native";
-import { Avatar, Button, Switch } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
+import { Avatar } from "@rneui/themed";
 import Map from "../components/Map";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import StateModal from "../components/StateModal";
-import pushNotification from "../Utils/pushNotification";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TripProcessingNav from "../components/Driver/TripProcessingNav";
 import TripArrivedNav from "../components/Driver/TripArrivedNav";

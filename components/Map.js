@@ -1,22 +1,20 @@
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import React from "react";
-import tw from "tailwind-react-native-classnames";
+import { faCar } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import MapViewDirections from "react-native-maps-directions";
-import { GOOGLE_MAP_API } from "@env";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react/cjs/react.development";
-import { useRef } from "react/cjs/react.development";
+import tw from "tailwind-react-native-classnames";
 import {
   selectDestination,
   selectOrigin,
-  setDestination,
-  setTravelTimeInfromation,
+  setTripInformation,
 } from "../slices/navSlice";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCar } from "@fortawesome/free-solid-svg-icons";
+import getDistanceAndDuration from "../Utils/getDistanceAndDuration";
+import getGeometies from "../Utils/getGeometries";
 
-const Map = ({ autocompleteInput }) => {
+const Map = () => {
+  const [geometries, setGeometries] = useState([]);
   let origin = useSelector(selectOrigin);
   let destination = useSelector(selectDestination);
   const DEFAULT_PADDING = { top: 40, right: 40, bottom: 40, left: 40 };
@@ -36,21 +34,19 @@ const Map = ({ autocompleteInput }) => {
         }
       );
 
-      const getTralvelInfo = async () => {
-        fetch(
-          `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.lat}%2C${origin.lng}&destinations=${destination.lat}%2C${destination.lng}&key=${GOOGLE_MAP_API}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            const action = setTravelTimeInfromation({
-              distance: data.rows[0].elements[0].distance.text,
-              duration: data.rows[0].elements[0].duration.text,
-            });
-            dispatch(action);
-          });
+      const asyncFunc = async () => {
+        let summary = await getDistanceAndDuration(origin, destination);
+        const action = setTripInformation({
+          distance: `${(summary.length / 1000).toFixed(2)} km`,
+          duration: `${(summary.duration / 60).toFixed(2)} minutes`,
+        });
+        dispatch(action);
+
+        let coordinates = await getGeometies(origin, destination);
+        setGeometries([...coordinates]);
       };
 
-      getTralvelInfo();
+      asyncFunc();
     }
   }, [origin, destination]);
 
@@ -94,16 +90,8 @@ const Map = ({ autocompleteInput }) => {
         )}
 
         {origin && destination && (
-          <MapViewDirections
-            origin={{
-              latitude: origin.lat,
-              longitude: origin.lng,
-            }}
-            destination={{
-              latitude: destination.lat,
-              longitude: destination.lng,
-            }}
-            apikey={GOOGLE_MAP_API}
+          <Polyline
+            coordinates={[...geometries]}
             strokeWidth={3}
             strokeColor="red"
           />

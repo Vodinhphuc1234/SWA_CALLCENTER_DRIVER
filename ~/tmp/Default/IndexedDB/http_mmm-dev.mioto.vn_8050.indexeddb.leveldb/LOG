@@ -1,0 +1,14 @@
+2022/07/22-16:21:13.384 68f5 Reusing MANIFEST /home/vodinhphuc/React learning/FinalProject/CallCenterDriver/~/tmp/Default/IndexedDB/http_mmm-dev.mioto.vn_8050.indexeddb.leveldb/MANIFEST-000001
+2022/07/22-16:21:13.385 68f5 Recovering log #22
+2022/07/22-16:21:13.385 68f5 Reusing old log /home/vodinhphuc/React learning/FinalProject/CallCenterDriver/~/tmp/Default/IndexedDB/http_mmm-dev.mioto.vn_8050.indexeddb.leveldb/000022.log 
+2022/07/22-16:21:13.385 68f5 Delete type=2 #20
+2022/07/22-16:21:29.364 6283 Level-0 table #27: started
+2022/07/22-16:21:29.388 6283 Level-0 table #27: 531 bytes OK
+2022/07/22-16:21:29.421 6283 Delete type=0 #22
+2022/07/22-16:21:29.422 6283 Manual compaction at level-0 from '\x00\x08\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x09\x00\x00\x00' @ 0 : 0; will stop at '\x00\x08\x00\x00\x05' @ 163 : 1
+2022/07/22-16:21:29.422 6283 Compacting 1@0 + 1@1 files
+2022/07/22-16:21:29.444 6283 Generated table #28@0: 16 keys, 523 bytes
+2022/07/22-16:21:29.444 6283 Compacted 1@0 + 1@1 files => 523 bytes
+2022/07/22-16:21:29.477 6283 compacted to: files[ 0 1 1 0 0 0 0 ]
+2022/07/22-16:21:29.478 6283 Delete type=2 #27
+2022/07/22-16:21:29.478 6283 Manual compaction at level-0 from '\x00\x08\x00\x00\x05' @ 163 : 1 .. '\x00\x09\x00\x00\x00' @ 0 : 0; will stop at (end)

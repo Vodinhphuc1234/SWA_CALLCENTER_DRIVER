@@ -1,26 +1,22 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as Notifications from "expo-notifications";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import Modal from "react-native-modal";
+import { useDispatch, useSelector } from "react-redux";
+import tw from "tailwind-react-native-classnames";
+import NotificationTripmodal from "../components/NotificationTripmodal";
+import { selectUser, setUser } from "../slices/navSlice";
+import requestNotificationPermisson from "../Utils/requestNotificationPermisson";
 import HomeScreen from "./HomeScreen";
-import MapScreens from "./Trip/MapScreens";
+import LoginScreen from "./Login/LoginScreen";
+import ProfileEditScreen from "./Profile/ProfileEditScreen";
+import ProfileScreen from "./Profile/ProfileScreen";
+import RegisterScreen from "./Register/RegisterScreen";
 import ProcessingScreen from "./Trip/ProcessingScreen";
 import RatingScreen from "./Trip/RatingScreen";
 import WellcomeScreen from "./WellcomeScreen";
-import LoginScreen from "./Login/LoginScreen";
-import RegisterScreen from "./Register/RegisterScreen";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react/cjs/react.development";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { selectUser, setUser } from "../slices/navSlice";
-import ProfileScreen from "./Profile/ProfileScreen";
-import ProfileEditScreen from "./Profile/ProfileEditScreen";
-import { useState } from "react/cjs/react.development";
-import requestNotificationPermisson from "../Utils/requestNotificationPermisson";
-import * as Notifications from "expo-notifications";
-import Modal from "react-native-modal";
-import tw from "tailwind-react-native-classnames";
-import NotificationTripmodal from "../components/NotificationTripmodal";
-import { useRef } from "react/cjs/react.development";
 
 const NavigationScreen = () => {
   //delecration
@@ -109,11 +105,6 @@ const NavigationScreen = () => {
         <Stack.Screen
           name="ProfileEditScreen"
           component={ProfileEditScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="MapScreen"
-          component={MapScreens}
           options={{ headerShown: false }}
         />
         <Stack.Screen

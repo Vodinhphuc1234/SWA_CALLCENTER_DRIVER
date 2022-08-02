@@ -9,7 +9,7 @@ import {
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import SafeAreaViewAdroid from "../../components/SafeAreaView";
 
 const RatingScreen = () => {
