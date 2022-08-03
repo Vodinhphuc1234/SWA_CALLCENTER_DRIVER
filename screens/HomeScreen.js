@@ -1,12 +1,29 @@
 import {
+  faPowerOff,
+  faSignOut,
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Avatar } from "@rneui/themed";
+import React, { useCallback, useEffect, useState } from "react";
+import {
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import { GiftedChat } from "react-native-gifted-chat";
+import Modal from "react-native-modal";
+import { useDispatch, useSelector } from "react-redux";
 import tw from "tailwind-react-native-classnames";
+import TripArrivedNav from "../components/Driver/TripArrivedNav";
+import TripProcessingNav from "../components/Driver/TripProcessingNav";
+import Map from "../components/Map";
+import StateModal from "../components/StateModal";
 import {
   selectDestination,
   selectDriverState,
@@ -14,22 +31,6 @@ import {
   setDriverState,
   setUser,
 } from "../slices/navSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faPerson,
-  faPowerOff,
-  faSignOut,
-} from "@fortawesome/free-solid-svg-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-import { Avatar } from "@rneui/themed";
-import Map from "../components/Map";
-import { useState } from "react";
-import StateModal from "../components/StateModal";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import TripProcessingNav from "../components/Driver/TripProcessingNav";
-import TripArrivedNav from "../components/Driver/TripArrivedNav";
 
 const HomeScreen = () => {
   const navigator = useNavigation();
@@ -60,19 +61,111 @@ const HomeScreen = () => {
   let destination = useSelector(selectDestination);
 
   const Stack = createNativeStackNavigator();
+
+  //message modal
+  const [messageModalVisible, setMessageModalVisible] = useState(false);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    setMessages([
+      {
+        _id: 1,
+        text: "Hello developer",
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: "React Native",
+          avatar: "https://placeimg.com/140/140/any",
+        },
+      },
+    ]);
+  }, []);
+
+  const onSend = useCallback((messages = []) => {
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, messages)
+    );
+  }, []);
   return (
     <>
       <SafeAreaView>
         <View
           style={[
-            tw`relative h-full ${
-              origin && destination && "h-3/4"
-            } bg-white mt-7`,
+            tw`relative ${origin && destination && "h-3/4"} bg-white mt-7`,
           ]}
         >
           <Map />
           <TouchableOpacity
-            style={tw`absolute bottom-20 right-5 bg-gray-500 h-10 w-10 rounded-full flex items-center justify-center`}
+            style={{ position: "absolute", bottom: 30, left: 10 }}
+            onPress={() => {
+              setMessageModalVisible(true);
+            }}
+          >
+            <Avatar
+              size={50}
+              rounded
+              containerStyle={{
+                backgroundColor: "blue",
+              }}
+              icon={{ name: "send", type: "font-awesome" }}
+            />
+          </TouchableOpacity>
+          <Modal
+            isVisible={messageModalVisible}
+            swipeDirection="up"
+            onSwipeComplete={() => setMessageModalVisible(false)}
+            animationIn="slideInUp"
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                shadowColor: "back",
+                width: "100%",
+                height: "90%",
+                borderRadius: 10,
+                padding: 3,
+              }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  height: 50,
+                  display: "flex",
+                  backgroundColor: "#f2f3f4",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 16,
+                    fontWeight: "700",
+                  }}
+                >
+                  Chat with your customer
+                </Text>
+                <TouchableOpacity
+                  style={{ position: "absolute", right: 20, padding: 10 }}
+                  onPress={() => {
+                    setMessageModalVisible(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTimesCircle} color="gray" />
+                </TouchableOpacity>
+              </View>
+              <GiftedChat
+                messages={messages}
+                onSend={(messages) => onSend(messages)}
+                user={{
+                  _id: 1,
+                }}
+              />
+            </View>
+          </Modal>
+          <TouchableOpacity
+            style={tw`absolute bottom-8 right-5 bg-gray-500 h-10 w-10 rounded-full flex items-center justify-center`}
             onPress={async () => {
               await AsyncStorage.removeItem("USER_TOKEN");
               dispatch(setUser(null));
