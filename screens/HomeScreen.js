@@ -20,6 +20,7 @@ import { GiftedChat } from "react-native-gifted-chat";
 import Modal from "react-native-modal";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "tailwind-react-native-classnames";
+import ChatComponent from "../components/ChatComponent";
 import TripArrivedNav from "../components/Driver/TripArrivedNav";
 import TripProcessingNav from "../components/Driver/TripProcessingNav";
 import Map from "../components/Map";
@@ -27,8 +28,11 @@ import StateModal from "../components/StateModal";
 import {
   selectDestination,
   selectDriverState,
+  selectMessages,
   selectOrigin,
+  selectSocket,
   setDriverState,
+  setMessages,
   setUser,
 } from "../slices/navSlice";
 
@@ -64,28 +68,7 @@ const HomeScreen = () => {
 
   //message modal
   const [messageModalVisible, setMessageModalVisible] = useState(false);
-  const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-    ]);
-  }, []);
-
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );
-  }, []);
   return (
     <>
       <SafeAreaView>
@@ -155,13 +138,7 @@ const HomeScreen = () => {
                   <FontAwesomeIcon icon={faTimesCircle} color="gray" />
                 </TouchableOpacity>
               </View>
-              <GiftedChat
-                messages={messages}
-                onSend={(messages) => onSend(messages)}
-                user={{
-                  _id: 1,
-                }}
-              />
+             <ChatComponent/>
             </View>
           </Modal>
           <TouchableOpacity

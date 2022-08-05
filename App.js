@@ -4,14 +4,17 @@ import store from "./store";
 import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import NavigationScreen from "./screens/NavigationScreen";
-import { registerRootComponent } from 'expo';
+import { registerRootComponent } from "expo";
+import { socket, SocketContext } from "./context/socketContext";
 
 export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
         <NavigationContainer>
-          <NavigationScreen />
+          <SocketContext.Provider value={socket}>
+            <NavigationScreen />
+          </SocketContext.Provider>
         </NavigationContainer>
       </SafeAreaProvider>
     </Provider>
