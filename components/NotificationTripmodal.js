@@ -1,51 +1,58 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import tw from "tailwind-react-native-classnames";
-import Modal from "react-native-modal";
 import { Button, Divider } from "@rneui/themed";
-import { useDispatch } from "react-redux";
-import { setDestination, setOrigin } from "../slices/navSlice";
+import React, { useState } from "react";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
+import Modal from "react-native-modal";
+import { useDispatch, useSelector } from "react-redux";
+import tw from "tailwind-react-native-classnames";
+import {
+  resetTrip,
+  selectNotificationTrip,
+  selectTripInformation,
+  setNotificationTrip,
+  setTripInformation,
+} from "../slices/navSlice";
+import convertTripInformation from "../Utils/adapter/convertTripInformation";
+import UpdateTrip from "../Utils/trip/updateTrip";
 
-const NotificationTripmodal = ({
-  isVisible,
-  setIsVisible,
-  origin,
-  destination,
-  timerRef,
-}) => {
+const NotificationTripmodal = ({ origin, destination, timerRef }) => {
+  const tripInfo = useSelector(selectTripInformation);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const notificationTrip = useSelector(selectNotificationTrip);
   return (
     <Modal
-      isVisible={isVisible}
-      style={tw`h-5/6`}
-      onBackdropPress={() => {
-        setIsVisible(false);
-      }}
+      isVisible={notificationTrip}
       animationIn="zoomIn"
       animationOut="zoomOut"
     >
-      <View style={tw`p-8 h-full bg-white`}>
+      <View style={{ padding: 20, height: "100%", backgroundColor: "white" }}>
         <View
           style={tw`bg-gray-50 p-5 border-dotted border-2 border-gray-300 mb-10`}
         >
           <View style={tw``}>
-            <Text style={tw`text-lg font-bold`}>{origin.name}</Text>
-            <Text style={tw`text-gray-500`}>{origin.description}</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>
+              {origin.description}
+            </Text>
             <Divider style={tw`my-5`} />
 
-            <Text style={tw`text-lg font-bold`}>{destination.name}</Text>
-            <Text style={tw`text-gray-500`}>{destination.description}</Text>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>
+              {destination.description}
+            </Text>
             <Divider style={tw`my-5`} />
-            <View style={tw`bg-yellow-500 p-2 rounded-full`}>
-              <Text style={tw`text-white font-bold`}>Distance: 100km</Text>
+            <View style={tw`bg-yellow-500 py-2 px-5 rounded-full`}>
+              <Text style={tw`text-white font-bold`}>
+                Distance: {tripInfo.distance}
+              </Text>
             </View>
           </View>
         </View>
         <View
           style={tw`bg-gray-50 p-5 border-dotted border-2 border-gray-300 flex-row justify-between`}
         >
-          <Text style={tw`text-gray-500`}>Money (Cash)</Text>
-          <Text style={tw`font-bold`}>50,000 VND</Text>
+          <Text style={tw`text-gray-500`}>
+            Money ({tripInfo.paymentMethod})
+          </Text>
+          <Text style={tw`font-bold`}>{tripInfo.price} VND</Text>
         </View>
 
         <View style={tw`flex-row w-full justify-center flex-grow items-end`}>
@@ -58,23 +65,36 @@ const NotificationTripmodal = ({
             }}
             titleStyle={tw`text-red-500`}
             onPress={() => {
-              setIsVisible(false);
+              dispatch(setNotificationTrip(false));
               clearTimeout(timerRef.current);
+              dispatch(resetTrip());
             }}
           >
             Cancel
           </Button>
           <Button
+            disabled={loading}
             buttonStyle={tw`bg-green-500`}
             containerStyle={tw`flex-grow`}
-            onPress={() => {
-              dispatch(setOrigin({ ...origin }));
-              dispatch(setDestination({ ...destination }));
+            onPress={async () => {
+              setLoading(true);
+              const data = await UpdateTrip(tripInfo.self, {
+                status: "assigned",
+              });
+              setLoading(false);
+
+              if (data?.data?.message) {
+                Alert.alert("Error", data?.data?.message);
+              } else {
+                const trip = convertTripInformation(data);
+                dispatch(setTripInformation({ ...trip.tripInformation }));
+              }
+
               clearTimeout(timerRef.current);
-              setIsVisible(false);
+              dispatch(setNotificationTrip(false));
             }}
           >
-            Accept
+            {loading ? <ActivityIndicator /> : "Accept"}
           </Button>
         </View>
       </View>

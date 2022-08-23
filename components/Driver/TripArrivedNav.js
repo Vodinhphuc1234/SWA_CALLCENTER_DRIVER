@@ -1,47 +1,96 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import tw from "tailwind-react-native-classnames";
 import { faPerson } from "@fortawesome/free-solid-svg-icons";
-import pushNotification from "../../Utils/pushNotification";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Button } from "@rneui/themed";
-import {
-  selectDestination,
-  setDestination,
-  setOrigin,
-} from "../../slices/navSlice";
+import React, { useState } from "react";
+import { ActivityIndicator, Alert, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import tw from "tailwind-react-native-classnames";
+import {
+  resetTrip,
+  selectDestination,
+  selectOrigin,
+  selectTripInformation,
+} from "../../slices/navSlice";
+import convertTripInformation from "../../Utils/adapter/convertTripInformation";
+import UpdateTrip from "../../Utils/trip/updateTrip";
 
-const TripArrivedNav = () => {
+const TripArriveNav = () => {
+  const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
   const dispatch = useDispatch();
+  const tripInfo = useSelector(selectTripInformation);
+  const [loading, setLoading] = useState(false);
   return (
-    <View>
-      <View style={tw`mb-5 flex-row items-center flex-grow`}>
-        <View style={tw`rounded-full bg-blue-800 p-1 mr-5`}>
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "100%",
+      }}
+    >
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "blue",
+            padding: 5,
+            marginRight: 20,
+            borderRadius: 50,
+          }}
+        >
           <FontAwesomeIcon icon={faPerson} size={25} color="white" />
         </View>
         <View style={{ width: 320 }}>
-          <Text style={tw`text-lg font-bold`}>{destination.name}</Text>
+          <Text style={tw`text-gray-500`}>{origin.description}</Text>
+        </View>
+      </View>
+
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "yellow",
+            padding: 5,
+            marginRight: 20,
+            borderRadius: 50,
+          }}
+        >
+          <FontAwesomeIcon icon={faPerson} size={25} color="white" />
+        </View>
+        <View style={{ width: 320 }}>
           <Text style={tw`text-gray-500`}>{destination.description}</Text>
         </View>
       </View>
       <Button
+        disabled={loading}
         onPress={async () => {
-          await pushNotification(
-            "ExponentPushToken[Sv2M0_BfBvxRSjzYvtJ8jR]",
-            "Notification from Call Center",
-            "Your trip is compleled, rate 5 stars for driver if you feel like"
-          );
-
-          dispatch(setOrigin(null));
-          dispatch(setDestination(null));
+          setLoading(true);
+          const data = await UpdateTrip(tripInfo.self, { status: "complete" });
+          setLoading(false);
+          if (data?.status === 403) {
+            Alert.alert("Error", data?.data?.message);
+            dispatch(reset());
+          } else {
+            Alert.alert("Error", "Your trip is completed !!!");
+            dispatch(resetTrip());
+          }
         }}
       >
-        Complete
+        {loading ? <ActivityIndicator /> : "Complete"}
       </Button>
     </View>
   );
 };
 
-export default TripArrivedNav;
+export default TripArriveNav;

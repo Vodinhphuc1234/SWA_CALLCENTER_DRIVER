@@ -1,22 +1,23 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import SafeAreaViewAdroid from "../../components/SafeAreaView";
-import tw from "tailwind-react-native-classnames";
 import {
   faArrowLeft,
   faDriversLicense,
+  faMoneyBill,
   faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
-import { Avatar } from "@rneui/themed";
 import { Divider } from "@rneui/base";
+import { Avatar } from "@rneui/themed";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import tw from "tailwind-react-native-classnames";
+import SafeAreaViewAdroid from "../../components/SafeAreaView";
 
 const ProfileScreen = () => {
   const navigator = useNavigation();
   return (
     <SafeAreaViewAdroid>
-      <View style={tw`h-full p-8 bg-white`}>
+      <View style={tw`h-full p-5 bg-white`}>
         <View style={tw`flex-row items-center`}>
           <TouchableOpacity
             onPress={() => {
@@ -58,20 +59,28 @@ const ProfileScreen = () => {
 
         <View>
           <Divider />
-          <TouchableOpacity style={tw`flex-row items-center px-5 py-3`}>
-            <FontAwesomeIcon icon={faDriversLicense} />
-            <Text style={tw`font-bold ml-5`}>Ride history</Text>
+          <TouchableOpacity
+            style={tw`flex-row items-center px-5 py-3`}
+            onPress={() => {
+              navigator.navigate("IncomeScreen");
+            }}
+          >
+            <FontAwesomeIcon icon={faMoneyBill} />
+            <Text style={tw`font-bold ml-5`}>Income</Text>
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity style={tw`flex-row items-center px-5 py-3`}>
+          <TouchableOpacity style={tw`flex-row items-center px-5 py-3`} onPress={() => {
+                navigator.navigate("HistoryScreen");
+              }}>
             <FontAwesomeIcon icon={faDriversLicense} />
-            <Text style={tw`font-bold ml-5`}>Ride history</Text>
+            <Text
+              style={tw`font-bold ml-5`}
+              
+            >
+              Ride history
+            </Text>
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity style={tw`flex-row items-center px-5 py-3`}>
-            <FontAwesomeIcon icon={faDriversLicense} />
-            <Text style={tw`font-bold ml-5`}>Ride history</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaViewAdroid>

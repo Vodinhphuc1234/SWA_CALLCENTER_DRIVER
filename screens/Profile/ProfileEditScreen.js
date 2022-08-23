@@ -1,19 +1,17 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import SafeAreaViewAdroid from "../../components/SafeAreaView";
-import tw from "tailwind-react-native-classnames";
 import {
   faArrowLeft,
   faCamera,
-  faCircleCheck,
-  faDriversLicense,
-  faPencil,
+  faCircleCheck
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation } from "@react-navigation/native";
+import { Button } from "@rneui/base";
 import { Avatar, Input } from "@rneui/themed";
-import { Button, Divider } from "@rneui/base";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import tw from "tailwind-react-native-classnames";
+import SafeAreaViewAdroid from "../../components/SafeAreaView";
 
 const ProfileEditScreen = () => {
   const navigator = useNavigation();
@@ -29,7 +27,7 @@ const ProfileEditScreen = () => {
   };
   return (
     <SafeAreaViewAdroid>
-      <View style={tw`h-full p-8 bg-white`}>
+      <View style={tw`h-full p-5 bg-white`}>
         <View style={tw`flex-row items-center`}>
           <TouchableOpacity
             onPress={() => {

@@ -8,15 +8,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Avatar } from "@rneui/themed";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Alert,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
 import Modal from "react-native-modal";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "tailwind-react-native-classnames";
@@ -26,15 +26,20 @@ import TripProcessingNav from "../components/Driver/TripProcessingNav";
 import Map from "../components/Map";
 import StateModal from "../components/StateModal";
 import {
+  reset,
+  selectCurrentVehicle,
   selectDestination,
   selectDriverState,
-  selectMessages,
+  selectIP,
   selectOrigin,
-  selectSocket,
+  selectPingAuth,
+  selectPingData,
+  selectTripInformation,
   setDriverState,
-  setMessages,
-  setUser,
+  setPingAuth,
 } from "../slices/navSlice";
+import logout from "../Utils/auth/logout";
+import getListVehicles from "../Utils/trip/getListVehicles";
 
 const HomeScreen = () => {
   const navigator = useNavigation();
@@ -43,9 +48,8 @@ const HomeScreen = () => {
   const [invisibleModal, setInvisibleModal] = useState(false);
 
   const driverState = useSelector(selectDriverState);
-  const { autoGetTrip, active } = driverState || {
+  const { autoGetTrip } = driverState || {
     autoGetTrip: false,
-    active: false,
   };
   const toggleAutoGetTrip = () => {
     dispatch(
@@ -54,29 +58,52 @@ const HomeScreen = () => {
       })
     );
   };
-  const toggleActive = () => {
-    dispatch(
-      setDriverState({
-        active: !active,
-      })
-    );
-  };
+
+  const pingData = useSelector(selectPingData);
+  const pingAuth = useSelector(selectPingAuth);
+  const IP = useSelector(selectIP);
+
   let origin = useSelector(selectOrigin);
   let destination = useSelector(selectDestination);
+  let tripInfo = useSelector(selectTripInformation);
 
   const Stack = createNativeStackNavigator();
 
   //message modal
   const [messageModalVisible, setMessageModalVisible] = useState(false);
 
+  // get vehicle
+  const currentVehicle = useSelector(selectCurrentVehicle);
+  const [vehicles, setVehicles] = useState([]);
+
+  useEffect(() => {
+    const asyncFunc = async () => {
+      let data = await getListVehicles();
+      console.log(data);
+      if (data?.status === 403) {
+        Alert.alert("Error", data?.data?.message);
+        AsyncStorage.removeItem("token");
+        dispatch(reset());
+        setVehicles([]);
+      } else if (data?.data?.message) {
+        Alert.alert("Error", data.message);
+        setVehicles([]);
+      } else {
+        const vehicles = data.results.filter(
+          (item) => !currentVehicle || item.self !== currentVehicle.self
+        );
+
+        setVehicles(vehicles);
+      }
+    };
+
+    asyncFunc();
+  }, [currentVehicle, pingData, IP]);
+
   return (
     <>
       <SafeAreaView>
-        <View
-          style={[
-            tw`relative ${origin && destination && "h-3/4"} bg-white mt-7`,
-          ]}
-        >
+        <View style={[tw`${origin && destination && "h-3/4"}`]}>
           <Map />
           <TouchableOpacity
             style={{ position: "absolute", bottom: 30, left: 10 }}
@@ -138,14 +165,17 @@ const HomeScreen = () => {
                   <FontAwesomeIcon icon={faTimesCircle} color="gray" />
                 </TouchableOpacity>
               </View>
-             <ChatComponent/>
+              <ChatComponent />
             </View>
           </Modal>
           <TouchableOpacity
             style={tw`absolute bottom-8 right-5 bg-gray-500 h-10 w-10 rounded-full flex items-center justify-center`}
             onPress={async () => {
-              await AsyncStorage.removeItem("USER_TOKEN");
-              dispatch(setUser(null));
+              const data = await logout();
+              console.log(data);
+              dispatch(reset());
+              dispatch(setPingAuth(!pingAuth));
+              await AsyncStorage.removeItem("token");
             }}
           >
             <FontAwesomeIcon icon={faSignOut} color="white" size={20} />
@@ -174,34 +204,40 @@ const HomeScreen = () => {
             />
           </TouchableOpacity>
         </View>
-        {origin && destination && (
-          <View style={tw`h-1/4 z-50 p-5`}>
-            <Stack.Navigator>
-              <Stack.Screen
-                name="TripProcessingNav"
-                component={TripProcessingNav}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="TripArrivedNav"
-                component={TripArrivedNav}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack.Navigator>
-          </View>
-        )}
+        {origin &&
+          destination &&
+          (tripInfo?.status == "assigned" || tripInfo?.status == "pick_up") && (
+            <View style={tw`h-1/4 z-50 p-5`}>
+              <Stack.Navigator>
+                {tripInfo?.status == "assigned" && (
+                  <Stack.Screen
+                    name="TripProcessingNav"
+                    component={TripProcessingNav}
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                )}
+                {tripInfo?.status == "pick_up" && (
+                  <Stack.Screen
+                    name="TripArrivedNav"
+                    component={TripArrivedNav}
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                )}
+              </Stack.Navigator>
+            </View>
+          )}
       </SafeAreaView>
       <StateModal
+        currentVehicle={currentVehicle}
+        vehicles={vehicles}
         setIsVisibleModal={setInvisibleModal}
         isVisibleModal={invisibleModal}
         toggleAutoGetTrip={toggleAutoGetTrip}
-        toggleActive={toggleActive}
         autoGetTrip={autoGetTrip}
-        active={active}
       />
     </>
   );
